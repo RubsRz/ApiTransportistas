@@ -10,12 +10,14 @@ app.set('port', 3000);
 //Middlewares
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:8100' }));
+app.use(cors());
 
 
 //Proyecto Transportistas
 app.use('/api/transiciones', require('./routes/transiciones.routes'))
 app.use('/api/vehiculos', require('./routes/vehiculos.routes'))
+app.use('/api/registros', require('./routes/registros.routes'))
+
 
 //Starting the server
 app.listen(app.get('port'), () => {
