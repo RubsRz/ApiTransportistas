@@ -5,6 +5,8 @@ const transicionesCtrl = require('../controllers/transiciones.controller');
 
 router.get('/getTransiciones', transicionesCtrl.getTransiciones);
 
+router.get('/getTransicion/:vehiculoId', transicionesCtrl.getTransicion);
+
 router.post('/addTransicion', transicionesCtrl.addTransicion);
 
 router.post('/deleteTransicion', transicionesCtrl.removeTransicion);

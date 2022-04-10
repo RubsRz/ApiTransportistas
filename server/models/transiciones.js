@@ -3,8 +3,8 @@ const { Schema } = mongoose;
 
 const TransicionSchema = new Schema({
     transicion: { type: String, required: true },
-    hora: { type: Date },
-    id_vehiculo: { type: Number }
+    fecha: { type: Date },
+    vehiculoId: { type: String }
 });
 
 module.exports = mongoose.model('Transiciones', TransicionSchema, 'transiciones');
