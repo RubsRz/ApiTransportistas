@@ -4,9 +4,10 @@ const { Schema } = mongoose;
 const VehiculoSchema = new Schema({
     marca: { type: String, required: true },
     modelo: { type: String },
-    placa: { type: String },
     color: { type: String },
-    conductor: { type: String }
+    año: { type: Number },
+    placas: { type: String },
+    // conductor: { type: String }
     // id_user: { type: String, required: true },
 
 });

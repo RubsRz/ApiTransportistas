@@ -5,14 +5,14 @@ const cors = require('cors');
 const { mongoose } = require('./database');
 
 // Settings
-app.set('port', 3000);
+app.set('port', 3001);
 
 //Middlewares
 app.use(morgan('dev'));
 // app.use(express.json());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb' }));
-app.use(cors());
+app.use(cors({ origin: '*' }));
 
 
 //Proyecto Transportistas
@@ -24,4 +24,5 @@ app.use('/api/registros', require('./routes/registros.routes'))
 //Starting the server
 app.listen(app.get('port'), () => {
     console.log("Server on port " + app.get('port'));
+    // console.log(process.memoryUsage());
 });
