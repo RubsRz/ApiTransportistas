@@ -15,8 +15,6 @@ router.post('/updateEmpleado', registrosCtrl.updateEmpleado);
 
 router.post('/deleteEmpleado', registrosCtrl.deleteEmpleado);
 
-
-// router.post('/addRegistros', registrosCtrl.addTransicion);
-// router.post('/deleteRegistro', registrosCtrl.removeTransicion);
+router.post('/login', registrosCtrl.login);
 
 module.exports = router;

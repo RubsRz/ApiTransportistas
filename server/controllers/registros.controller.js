@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const registro = require('../models/registros');
 const registrosCtrl = {};
 
@@ -7,10 +8,88 @@ registrosCtrl.getRegistros = async(req, res) => {
     res.json(registrosList);
 };
 
-registrosCtrl.getRegistro = async(req, res) => {
-    const find = await registro.find({ '_id': req.params.id });
-    res.json(find);
+registrosCtrl.login = async(req, res) => {
+    const { username, password } = req.body;
+
+    console.log(username, password)
+
+    // Buscar al usuario en la base de datos
+    const user = await registro.findOne({ usuario: username }).lean();
+
+    if (!user) {
+        // Si el usuario no existe, enviar una respuesta con un error
+        res.json({ success: false, message: 'Usuario no encontrado' });
+    } else {
+        // Si el usuario existe, comparar la contraseña proporcionada con la contraseña hasheada
+        const match = await bcrypt.compare(password, user.contraseña);
+
+        if (match) {
+            // Si las contraseñas coinciden, enviar una respuesta con los datos del usuario
+            res.json({ success: true, data: user });
+        } else {
+            // Si las contraseñas no coinciden, enviar una respuesta con un error
+            res.json({ success: false, message: 'Contraseña incorrecta' });
+        }
+    }
 };
+
+
+
+
+registrosCtrl.getRegistro = async (req, res) => {
+    try {
+      const empleado = await registro.aggregate([
+        {
+          $match: { '_id': req.params.id }
+        },
+        {
+          $lookup: {
+            from: 'vehiculos',
+            localField: 'id_vehiculo',
+            foreignField: '_id',
+            as: 'vehiculo_info'
+          }
+        },
+        {
+          $unwind: '$vehiculo_info'
+        },
+        {
+          $addFields: {
+            vehiculo_marca: '$vehiculo_info.marca',
+            vehiculo_modelo: '$vehiculo_info.modelo',
+            vehiculo_anio: '$vehiculo_info.año',
+            vehiculo_placas: '$vehiculo_info.placas',
+            vehiculo_color: '$vehiculo_info.color',
+            // Agrega aquí cualquier otro campo del vehículo que quieras incluir
+          }
+        },
+        {
+          $project: {
+            imagen: 0,
+            contraseña: 0,
+            vehiculo_info: 0 // Esto excluye el campo 'vehiculo_info' original
+          }
+        }
+      ]);
+  
+      if (!empleado[0]) {
+        return res.status(404).json({
+          ok: false,
+          msg: "No se encontró ese registro con ese id"
+        });
+      }
+  
+      return res.status(200).json(empleado[0]);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        ok: false,
+        msg: "Fallo al obtener el registro."
+      });
+    }
+  };
+  
+  
 
 registrosCtrl.uptadeRegistro = async(req, res) => {
     let body = req.body;
